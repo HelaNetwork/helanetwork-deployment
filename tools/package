@@ -1,0 +1,119 @@
+#!/bin/bash
+
+NETWORK=
+
+BASIC=false
+CONFIG=false
+BINARY=false
+
+SAFE=false
+DEPLOY=false
+
+[ -f .default ] && source .default
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+    --network=?*)
+        NETWORK=${1#*=}
+        ;;
+    --basic)
+        BASIC=true
+        ;;
+    --config)
+        CONFIG=true
+        ;;
+    --binary)
+        BINARY=true
+        ;;
+    --all)
+        BASIC=true
+        CONFIG=true
+        BINARY=true
+        ;;
+    --safe)
+        SAFE=true
+        ;;
+    --deploy)
+        DEPLOY=true
+        ;;
+    esac
+    shift
+done
+
+[ -z "$NETWORK" ] && {
+    echo "no network!"
+    exit 1
+}
+
+FILE_LIST=
+
+$BASIC && {
+    FILE_LIST="
+        $FILE_LIST
+        builder
+        service.sh
+        package
+        init_node
+        template/
+    "
+}
+
+$CONFIG && {
+    if $SAFE ; then
+        FILE_LIST="
+            $FILE_LIST
+            $NETWORK/config
+            $NETWORK/genesis.json
+            $NETWORK/validator-*/config.yml
+            $NETWORK/compute-*/config.yml
+            $NETWORK/entity-*/*.json
+            $NETWORK/seed-*/
+            $NETWORK/client-*/
+            $NETWORK/runtime-*/
+            $NETWORK/w3-gateway-*/
+            $NETWORK/envoy-*/
+        "
+     elif $DEPLOY; then
+        FILE_LIST="
+            $FILE_LIST
+            $NETWORK/config
+            $NETWORK/genesis.json
+            $NETWORK/validator-*/
+            $NETWORK/compute-*/
+            $NETWORK/entity-*/*.json
+            $NETWORK/seed-*/
+            $NETWORK/client-*/
+            $NETWORK/runtime-*/
+            $NETWORK/w3-gateway-*/
+            $NETWORK/envoy-*/
+        "
+     else
+        FILE_LIST="
+            $FILE_LIST
+            $NETWORK/
+        "
+    fi
+}
+
+$BINARY && {
+    FILE_LIST="
+        $FILE_LIST
+        envoy
+        jq
+        hela
+        oasis-node
+        oasis-web3-gateway
+        hela-evm.orc
+    "
+}
+
+[ -z "$FILE_LIST" ] && {
+    echo "no filelist!"
+    exit 1
+}
+
+echo "$FILE_LIST" | sed 's/^\s*/    /;/^\s*$/d'
+echo "==>"
+echo "    deployment.tar.gz"
+
+tar czf deployment.tar.gz --transform "s,^,deployment/," $FILE_LIST

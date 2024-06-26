@@ -1,0 +1,146 @@
+PROJECT=snap
+RELEASE=test
+SERVERS="
+    54.254.214.45 
+    13.251.129.207 
+    52.77.242.137 
+    13.229.45.16 
+
+    13.212.208.18
+    54.151.175.110
+    54.169.119.169
+    13.229.91.253
+
+    52.77.218.151 
+    13.212.208.252 
+    13.250.51.51 
+    54.251.114.35
+    54.251.0.29 
+    13.250.103.112 
+
+    13.212.218.195
+    54.255.210.51
+"
+
+#    54.255.130.194 
+#    13.229.96.214 
+#    54.254.6.200 
+#    13.212.5.190 
+#    54.251.21.255 
+
+DEPLOY_USER=ubuntu
+REMOTE_DEPLOY_PATH=/home/ubuntu/hela-deploy
+
+HELA_NODE=../oasis-core/go/oasis-node/hela-node
+HELA_CLI=../cli/hela
+HELA_WEB3_GATEWAY=../oasis-web3-gateway/hela-web3-gateway
+HELA_EVM_RUNTIME_ORC=../emerald-paratime/hela-evm.orc
+
+# HELA_NODE=./hela-node
+# HELA_CLI=./hela
+# HELA_WEB3_GATEWAY=./hela-web3-gateway
+# HELA_EVM_RUNTIME_ORC=./hela-evm.orc
+
+
+ENVOY=./envoy
+
+METRICS_NODES=""
+
+declare -A SERVER_CONN_IP
+
+declare -A SERVICES
+
+SERVICES[54.254.214.45]=" validator-01 seed-01"
+SERVICES[13.251.129.207]="validator-02 seed-02"
+SERVICES[52.77.242.137]=" validator-03"
+SERVICES[13.229.45.16]="  validator-04"
+
+SERVICES[13.212.208.18]=" compute-01"
+SERVICES[54.151.175.110]="compute-02"
+SERVICES[54.169.119.169]="compute-03"
+SERVICES[13.229.91.253]=" compute-04"
+
+SERVICES[52.77.218.151]=" client-01 w3-gateway-01 envoy-01" # Wallet
+SERVICES[13.212.208.252]="client-02 w3-gateway-02 envoy-02" # Runtime scanner + scanner frontend
+SERVICES[13.250.51.51]="  client-03"                        # Consensus API
+
+SERVICES[54.251.114.35]=" client-04 w3-gateway-03"          # Runtime RPCs
+SERVICES[54.251.0.29]="   client-05 w3-gateway-04"
+SERVICES[13.250.103.112]="client-06 w3-gateway-05"
+SERVICES[13.212.218.195]="client-09 w3-gateway-08"
+
+SERVICES[54.255.210.51]=" client-10 w3-gateway-09"          # Governance
+
+declare -A SERVICE_ACCESS_IP
+declare -A OCCUPIED_PORTS
+
+declare -A ENTITY_VALIDATORS
+ENTITY_VALIDATORS[entity-01]="validator-01"
+ENTITY_VALIDATORS[entity-02]="validator-02"
+ENTITY_VALIDATORS[entity-03]="validator-03"
+ENTITY_VALIDATORS[entity-04]="validator-04"
+
+declare -A ENTITY_COMPUTES
+ENTITY_COMPUTES[entity-21]="compute-01"
+ENTITY_COMPUTES[entity-22]="compute-02"
+ENTITY_COMPUTES[entity-23]="compute-03"
+ENTITY_COMPUTES[entity-24]="compute-04"
+
+declare -A RUNTIME_ENTITY
+RUNTIME_ENTITY[runtime-hela-evm]="entity-41"
+
+declare -A RUNTIME_COMPUTES
+RUNTIME_COMPUTES[runtime-hela-evm]="compute-01 compute-02 compute-03 compute-04"
+
+declare -A RUNTIME_CLIENTS
+RUNTIME_CLIENTS[runtime-hela-evm]="client-01 client-02 client-03 client-04  client-05 client-06 client-09 client-10"
+
+declare -A RUNTIME_W3_GATEWAYS
+RUNTIME_W3_GATEWAYS[runtime-hela-evm]="w3-gateway-01 w3-gateway-02 w3-gateway-03  w3-gateway-04 w3-gateway-05 w3-gateway-08 w3-gateway-09"
+
+declare -A VALIDATOR_SENTRIES
+#VALIDATOR_SENTRIES[validator-01]="sentry-01"
+#VALIDATOR_SENTRIES[validator-02]="sentry-02"
+#VALIDATOR_SENTRIES[validator-03]="sentry-03"
+#VALIDATOR_SENTRIES[validator-04]="sentry-04"
+
+declare -A W3_GATEWAY_CLIENT
+W3_GATEWAY_CLIENT[w3-gateway-01]="client-01"
+W3_GATEWAY_CLIENT[w3-gateway-02]="client-02"
+W3_GATEWAY_CLIENT[w3-gateway-03]="client-04"
+
+W3_GATEWAY_CLIENT[w3-gateway-04]="client-05"
+W3_GATEWAY_CLIENT[w3-gateway-05]="client-06"
+
+W3_GATEWAY_CLIENT[w3-gateway-08]="client-09"
+W3_GATEWAY_CLIENT[w3-gateway-09]="client-10"
+
+#               supply    initiator tax       faucet
+EXTRA_ENTITIES="entity-51 entity-52 entity-53 entity-54"
+
+GENESIS_ENTITIES="entity-01 entity-02 entity-03 entity-04  
+                  entity-21 entity-22 entity-23 entity-24 
+                  entity-41
+                  entity-51"
+GENESIS_NODES="validator-01 validator-02 validator-03 validator-04"
+GENESIS_RUNTIMES="runtime-hela-evm"
+GENESIS_TOKEN_SYMBOL=HELA
+GENESIS_TOKEN_EXPONENT=9
+GENESIS_TOKEN_SUPPLY=$((80*1000*1000*1000000000))
+GENESIS_SUPPLY_ENTITY=entity-51
+
+declare -A GENESIS_GENERAL_BALANCE
+
+declare -A GENESIS_ESCROW_BALANCE
+GENESIS_ESCROW_BALANCE[entity-01]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-02]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-03]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-04]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-21]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-22]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-23]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-24]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-41]=$((200*1000*1000000000))
+GENESIS_ESCROW_BALANCE[entity-51]=$((100*1000*1000000000))
+
+HELA_EVM_CHAIN_ID=666888

@@ -1,0 +1,738 @@
+{
+  "height": 1,
+  "genesis_time": "2023-07-17T04:25:05.675036572+00:00",
+  "chain_id": "hela:mainnet",
+  "registry": {
+    "params": {
+      "disable_entity_registration": true,
+      "gas_costs": {
+        "deregister_entity": 1000,
+        "prove_freshness": 1000,
+        "register_entity": 1000,
+        "register_node": 1000,
+        "register_runtime": 1000,
+        "runtime_epoch_maintenance": 1000,
+        "unfreeze_node": 1000,
+        "update_keymanager": 1000
+      },
+      "max_node_expiration": 5,
+      "enable_runtime_governance_models": {
+        "entity": true,
+        "runtime": true
+      }
+    },
+    "entities": [
+      {
+        "untrusted_raw_value": "o2F2AmJpZFgg/ukABTwI7mBM5pHIvE9wCBKx7XL2TPwD0wk2rGDs16Flbm9kZXOBWCAsBGFethafvMcnlBvQVBjF3DlkCOQZbmRfAhFCNM//6g==",
+        "signature": {
+          "public_key": "/ukABTwI7mBM5pHIvE9wCBKx7XL2TPwD0wk2rGDs16E=",
+          "signature": "YM7Hxp28PB+5MAjBOjst2HrMjee/iKmYrU9m1EpoHNzHdtd+WIJrvG1bCGsQp/ioAVSyqjBzX5eP9RxyTKlsAg=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggLYuiynoMlnjc6RDTfeuHVc5Qa8DEi8CLfSY0fJ0WRWdlbm9kZXOBWCDOqWoRHqqg69XrKJTPu/xMEeVCsuCvntAvUwutLCIylQ==",
+        "signature": {
+          "public_key": "LYuiynoMlnjc6RDTfeuHVc5Qa8DEi8CLfSY0fJ0WRWc=",
+          "signature": "paJZk3C/5qlE6vxXZdM0HHiymLTQ8Hc8TtHWNqLdC7bp1zODVDUQbWK+/fZRlu//t9m6XsyUKJO+r6Fz1T6nBQ=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFgg+vQldJ3/0tSqOWqu2ptdTv/wS4S2CvMbCyy3gLwclFRlbm9kZXOBWCDmdTImHt0Aq7d5K44Hk+mrZtZTApDmwJto7lDnKxqy0w==",
+        "signature": {
+          "public_key": "+vQldJ3/0tSqOWqu2ptdTv/wS4S2CvMbCyy3gLwclFQ=",
+          "signature": "/0hl6+QXLWpXDvyNMUhwTohIUw0L40lsf8pZN//Q4FEP4wdaptciF8pIzhSm0K58k5afTfF4SJgi9waipr3yDQ=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggiaXXiXVMPxUOOFup8G7o9QlI8MPeBwT5GUbHmo+yRp5lbm9kZXOBWCD2zsGkli+2gk7airCak+UiQQweEhQm1af184CKYbULKw==",
+        "signature": {
+          "public_key": "iaXXiXVMPxUOOFup8G7o9QlI8MPeBwT5GUbHmo+yRp4=",
+          "signature": "a7isyY/TtTr4YVwxFSwxSnAs5u7ElFB4pSPQE1aGT85WkKdr4Ezq5iMPdPEeZRAqP7UidQ7pzAYgulRJWJpZDg=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFgglJFgg0V9TyPmh0hq/5VZ1qFi6RApyKPata0EjE9RmcJlbm9kZXOBWCA9k85jz0YVbETRg77GLZPB85E75Q5Q+d6DOonOhF8R1g==",
+        "signature": {
+          "public_key": "lJFgg0V9TyPmh0hq/5VZ1qFi6RApyKPata0EjE9RmcI=",
+          "signature": "ShWfgNV0tnKhEc2MR+qL/xj9wXDu87P9bseGMkcCff9oVtxrbqDqW1lkSeMk02pOm6A0twASc073vJKDtqhyDw=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFgggPU4l5LzpEVuAjchif/0d198wp+xnnDsPpu70VbZscBlbm9kZXOBWCDbYlGLRFfYNNcaKu7gxgWkymt2U07K+eIlrm8oQl76LA==",
+        "signature": {
+          "public_key": "gPU4l5LzpEVuAjchif/0d198wp+xnnDsPpu70VbZscA=",
+          "signature": "wztDNApjIBpAzZQybXjYQGNZeY1Ojqg81cfSke6KXZAoC4jGeQK9eW5dpxvyjB7dTR9+kXt/cPXyS+cmVfmMDw=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggivpxH9vmsZepjeUylPlaQTGapqykgCGFbUbqGiViZ5tlbm9kZXOBWCBhwKUEnGzTZXSxViIOfFGlsJbSysz8JnuHNFWMRw+7Cg==",
+        "signature": {
+          "public_key": "ivpxH9vmsZepjeUylPlaQTGapqykgCGFbUbqGiViZ5s=",
+          "signature": "jKxcx5gKatyBxFrw+M50PdIeOpMShVktgnqRQNVZ1diKizgG5T46Z/Dtfv1ogaijG19bbgtZkTsfOja3ifTjCg=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggKyh8+xcltAfqhh2Q5KEGTnQOP3U9nvMOawQfRQWvPZ1lbm9kZXOBWCD6NlKq7aKxqbGP242YI8/yuByWmZUHOz+NN6AMBYjRzA==",
+        "signature": {
+          "public_key": "Kyh8+xcltAfqhh2Q5KEGTnQOP3U9nvMOawQfRQWvPZ0=",
+          "signature": "1JiGmy4vpCqk94fIG14OICo1nXaQkehc4fM4yyLL3jBb5t8wurrJ+1QRN5gq6pNtbstK8hBcBiURMid8azB+Dg=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggkRAoGfdQTQBTd2RovSaCa5HtZYMuje0G6QXTTna2gptlbm9kZXOBWCDmVgK2PWtZ/K3s1SD9acWfbU5nfohFQnwP2u5h0RaYCg==",
+        "signature": {
+          "public_key": "kRAoGfdQTQBTd2RovSaCa5HtZYMuje0G6QXTTna2gps=",
+          "signature": "KxgmXcMJg4KAEs+edy854IeviXiYebiego6OewX+7oIcqldIzC/4Rsf44FxpPY+rigsC8EZfknCp6MMsqedCCg=="
+        }
+      },
+      {
+        "untrusted_raw_value": "o2F2AmJpZFggmgRfUwzUYLrXJTCCr9/5ybpWQUjeng2fFsn1HaDXGbdlbm9kZXOBWCCDRSWxpUapPxUn/MKMsZf3w9Z8LwcolufqYZc9rzXaYQ==",
+        "signature": {
+          "public_key": "mgRfUwzUYLrXJTCCr9/5ybpWQUjeng2fFsn1HaDXGbc=",
+          "signature": "QUIky3W/LI7uXUz0RIJyImG0pKZvY41EeG1sSM63sglU+BdVcIMvrra/frYRt1bg6WXXqApOJnE7AaNGdSSDDw=="
+        }
+      },
+      {
+        "untrusted_raw_value": "omF2AmJpZFggQy6Ug7+GrN+EYutOL7MJgHXpowVhq4d0cn/ON2YAvkE=",
+        "signature": {
+          "public_key": "Qy6Ug7+GrN+EYutOL7MJgHXpowVhq4d0cn/ON2YAvkE=",
+          "signature": "33Uus5fSCADAQccTZ8vbtiKXMQH3oBMxMKHq6ZyKuzoMu4e6JuU/uZqpP3jiJBqxUH160NKXWIPAMDOqtipWCA=="
+        }
+      },
+      {
+        "untrusted_raw_value": "omF2AmJpZFggBCr1DkEDyuI/BtIUzatm67oYRQ8qaqWWqDfbJHKIpwE=",
+        "signature": {
+          "public_key": "BCr1DkEDyuI/BtIUzatm67oYRQ8qaqWWqDfbJHKIpwE=",
+          "signature": "ZR86Wg+f6n7fMNUK5y71ZVsO7E3nyfstmSvfsTI4QM3lGIqydHhhhtDcqIzkcN/9GEaSnH/Na/NeDt0xI8ILAA=="
+        }
+      },
+      {
+        "untrusted_raw_value": "omF2AmJpZFgg+IqZQjMFKwpqdiB94Y73zSZEswoXvMZaHXREsQcaZnk=",
+        "signature": {
+          "public_key": "+IqZQjMFKwpqdiB94Y73zSZEswoXvMZaHXREsQcaZnk=",
+          "signature": "viLyO5EzyDbkpxLbBZr2ZSu4WqbR8vd7fgqc+G9VPBJx9u7LUUNP8z/g0qqSEc5sq+c8dv1cV7IcwkA5JuBPCw=="
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "untrusted_raw_value": "q2F2AmJpZFggLARhXrYWn7zHJ5Qb0FQYxdw5ZAjkGW5kXwIRQjTP/+pjcDJwomJpZFgg52tAAPJjT6xu7CVuKI+w6RXScMYphm7WUVPtsj+rZbBpYWRkcmVzc2Vz9mN0bHOjZ3B1Yl9rZXlYIB3lcO3DEU7WWCszCkeTiV+B01wM2GDC/47KiRrrFgRraWFkZHJlc3Nlc/ZsbmV4dF9wdWJfa2V5WCApIui4Eyw8SJfoW51KOG/+vXsBvggHQsTDTlrCFmcMw2N2cmahYmlkWCByPjjwCUJ0sBNPx5DWpdl9nb8yeTUyOjjxjPXQ4VL0HmVyb2xlcwhocnVudGltZXP2aWNvbnNlbnN1c6JiaWRYIKIp/CaWrC8nKDKg2N5ctO6FH85inSG+OqG0fVLCYujFaWFkZHJlc3Nlc4GiYmlkWCDna0AA8mNPrG7sJW4oj7DpFdJwximGbtZRU+2yP6tlsGdhZGRyZXNzo2JJUFAAAAAAAAAAAAAA//8N1bEzZFBvcnQZTiFkWm9uZWBpZW50aXR5X2lkWCD+6QAFPAjuYEzmkci8T3AIErHtcvZM/APTCTasYOzXoWpleHBpcmF0aW9uAHBzb2Z0d2FyZV92ZXJzaW9uczIyLjIuNi1naXRiMmNjZDhlNWU=",
+        "signatures": [
+          {
+            "public_key": "LARhXrYWn7zHJ5Qb0FQYxdw5ZAjkGW5kXwIRQjTP/+o=",
+            "signature": "2lBBwEcrEGlkSuzUK2vOhiBwtYJQaHDLzKJ9PsukdV7rsyE50BYslMXpJGoiY+qrTrZlV0lZ39qo/LJgiWTICg=="
+          },
+          {
+            "public_key": "52tAAPJjT6xu7CVuKI+w6RXScMYphm7WUVPtsj+rZbA=",
+            "signature": "pdQY7T1386hgJdem4UHoQJW8ZV/1vyos4qfaIuStRi2iA6BQPmzpnwyw6xF2TFITOB1p7dudJDNKjACRxVGHCg=="
+          },
+          {
+            "public_key": "oin8JpasLycoMqDY3ly07oUfzmKdIb46obR9UsJi6MU=",
+            "signature": "HzETkuyE173oSn4qTzkDbnHTgg+PJi8RrPLfAnIkbWTpt7ZDcBim58z7phFeF6QJLLyBygvUaGvAW8eqppWpBw=="
+          },
+          {
+            "public_key": "cj448AlCdLATT8eQ1qXZfZ2/Mnk1Mjo48Yz10OFS9B4=",
+            "signature": "NvME173/YEw8ZWkDLtZ8tDfNgLxyBiucSyi260WT6ZaIcuZ1Nkp4g3qwgo5IefkekynElnG2E0CQMAkjqei/Cg=="
+          },
+          {
+            "public_key": "HeVw7cMRTtZYKzMKR5OJX4HTXAzYYML/jsqJGusWBGs=",
+            "signature": "7XFsosPi2xFnCPv505D4pBGRAIuJovC26uhOhLoiry6Rle91tJ1SvTCE7ktKyyyw+9rdFihiyUwFRJFmaULKCA=="
+          }
+        ]
+      },
+      {
+        "untrusted_raw_value": "q2F2AmJpZFggzqlqER6qoOvV6yiUz7v8TBHlQrLgr57QL1MLrSwiMpVjcDJwomJpZFggNznEHtEqZpPFjABkBndTx/7qfrsSJw5pTHsd/IQGzQ5pYWRkcmVzc2Vz9mN0bHOjZ3B1Yl9rZXlYIF2CcoWMeHLtuovjJb9dsd8e0AKhNYvUYZi39ti0zm3+aWFkZHJlc3Nlc/ZsbmV4dF9wdWJfa2V5WCBZ6JTzeTLxEhHRJxVFhzMmEhewwi05pvPRh70tvMi+iWN2cmahYmlkWCDCoNScNz4bL8jwW6swWMwP9Z38Y8OZ5MSOlC4P/nEZiWVyb2xlcwhocnVudGltZXP2aWNvbnNlbnN1c6JiaWRYIDEyvqE4vUoL4HxmEZA+PBgaw+F8oZSYmdGO2FUnRLf5aWFkZHJlc3Nlc4GiYmlkWCA3OcQe0Spmk8WMAGQGd1PH/up+uxInDmlMex38hAbNDmdhZGRyZXNzo2JJUFAAAAAAAAAAAAAA//8N1hu/ZFBvcnQZTiFkWm9uZWBpZW50aXR5X2lkWCAti6LKegyWeNzpENN964dVzlBrwMSLwIt9JjR8nRZFZ2pleHBpcmF0aW9uAHBzb2Z0d2FyZV92ZXJzaW9uczIyLjIuNi1naXRiMmNjZDhlNWU=",
+        "signatures": [
+          {
+            "public_key": "zqlqER6qoOvV6yiUz7v8TBHlQrLgr57QL1MLrSwiMpU=",
+            "signature": "KgKgHcMd9hSxXHdpDfJe7E0dpbJeHIO9V+UEBpJGirRtrkenEchiBTN9M5gTU1oH8rnoMgPPqV3VGlo35Cp7CQ=="
+          },
+          {
+            "public_key": "NznEHtEqZpPFjABkBndTx/7qfrsSJw5pTHsd/IQGzQ4=",
+            "signature": "AMvkhzyI4ZDNp7uuJTefmmshSm3eEKtjrGduBbOMoTvCiGtz5J4CG/6IB65i8vp3x6lPvcP7cCVW8e6Gbz6QDQ=="
+          },
+          {
+            "public_key": "MTK+oTi9SgvgfGYRkD48GBrD4XyhlJiZ0Y7YVSdEt/k=",
+            "signature": "kStaiylnodBNQPwWMgmkLsrz86buCRWP1RCTnF7fYAt2Cch4DFnS3lxD8x2aPBz8VOJ5nUMZavH4SuV4y1SpCg=="
+          },
+          {
+            "public_key": "wqDUnDc+Gy/I8FurMFjMD/Wd/GPDmeTEjpQuD/5xGYk=",
+            "signature": "/s7YGYJYST6Zo4FkJ6j4i3Wrg/D2OGWDPV+GKWUWpZNdOAB3g+vCdttk1VqNv2PQiXgrKEvQTPL74HtZX0y0Bw=="
+          },
+          {
+            "public_key": "XYJyhYx4cu26i+Mlv12x3x7QAqE1i9RhmLf22LTObf4=",
+            "signature": "IiSC9oUU+7LNjPDWVCNo8haUEkdlb21tRJ5VuyelOgdvdDCTApn68hAt2ZctqTjbtZYmcznDqvuRe7PgpgpDDg=="
+          }
+        ]
+      },
+      {
+        "untrusted_raw_value": "q2F2AmJpZFgg5nUyJh7dAKu3eSuOB5Ppq2bWUwKQ5sCbaO5Q5ysastNjcDJwomJpZFggekgOJL0DKO4bDHEFmN0fMZWT6xTV1mTskZHmESKvCDppYWRkcmVzc2Vz9mN0bHOjZ3B1Yl9rZXlYIK9Xrslp+vGETy+uFNVsNHaY+oIyqv8vTopMh2dV8xFXaWFkZHJlc3Nlc/ZsbmV4dF9wdWJfa2V5WCDL+Iwpo23ZRAEm7n4/7nMMqGMuvzlAFh9q7v4xmoUPg2N2cmahYmlkWCDdgKFrWRFIHT/RP2eLX/qCXe+dK6L2exH4MytV2mem3WVyb2xlcwhocnVudGltZXP2aWNvbnNlbnN1c6JiaWRYIAdVkOfrhhMJugH02x014RGE/DMau1IDhPXBPSusX6uxaWFkZHJlc3Nlc4GiYmlkWCB6SA4kvQMo7hsMcQWY3R8xlZPrFNXWZOyRkeYRIq8IOmdhZGRyZXNzo2JJUFAAAAAAAAAAAAAA//8DALwvZFBvcnQZTiBkWm9uZWBpZW50aXR5X2lkWCD69CV0nf/S1Ko5aq7am11O//BLhLYK8xsLLLeAvByUVGpleHBpcmF0aW9uAHBzb2Z0d2FyZV92ZXJzaW9uczIyLjIuNi1naXRiMmNjZDhlNWU=",
+        "signatures": [
+          {
+            "public_key": "5nUyJh7dAKu3eSuOB5Ppq2bWUwKQ5sCbaO5Q5ysastM=",
+            "signature": "wJ/voxaxNHzRwQWOK7MfBRWr/9Xf3sBlGEszPhyIkrgMRyiLHIddwIOpA+z01jTwbObi2cbswzUoHVy7QME6Ag=="
+          },
+          {
+            "public_key": "ekgOJL0DKO4bDHEFmN0fMZWT6xTV1mTskZHmESKvCDo=",
+            "signature": "gcenpR+VLVaIJAD5UNQwKuvIV3EkD64YAB/t1TLggju4AtUbBACxA+4J9caZsqTQ8NSSayU/fWrbGotf5kS+Aw=="
+          },
+          {
+            "public_key": "B1WQ5+uGEwm6AfTbHTXhEYT8Mxq7UgOE9cE9K6xfq7E=",
+            "signature": "ddX0Ha9fMYLfPfFj0FhdOcZGIoMg55TEbL4Amz9bnWt/Gu4vaIFtHVEhmMj3JBvLDQJLG/BLsKHeoKkevgcLAg=="
+          },
+          {
+            "public_key": "3YCha1kRSB0/0T9ni1/6gl3vnSui9nsR+DMrVdpnpt0=",
+            "signature": "pLVai61ioY5qU+4OQzR75alLoNteVZAwhJur9IAO9mK30an3L55pEJznLyHFpaHn2wqhUJYgUFy+MK35rqk2Cw=="
+          },
+          {
+            "public_key": "r1euyWn68YRPL64U1Ww0dpj6gjKq/y9OikyHZ1XzEVc=",
+            "signature": "ObC7h4cH3GjYiHwZp14XCv7kYB4RSJYs7lCWWb4XYx+znSBTBPHeW+Xzg+3P25GHqdoxtxuByOTd8Y1nwX8PCw=="
+          }
+        ]
+      },
+      {
+        "untrusted_raw_value": "q2F2AmJpZFgg9s7BpJYvtoJO2oqwmpPlIkEMHhIUJtWn9fOAimG1CytjcDJwomJpZFggT5wlqKq1mVboV4tUsML71/R2GE1W5buxtneH038vu8FpYWRkcmVzc2Vz9mN0bHOjZ3B1Yl9rZXlYIPhvUgFe4Z8FB9KICSc4PaD00wUY5q5vfDiAPCJtSfmMaWFkZHJlc3Nlc/ZsbmV4dF9wdWJfa2V5WCDuXOiJgtetf4Op7Tt5TU8F1NcMT+eF4EhoQScBYuBm12N2cmahYmlkWCBZWZzIa/PF8eY8dMhoTup0bFbFkYZCjJE0pXD36sU1FmVyb2xlcwhocnVudGltZXP2aWNvbnNlbnN1c6JiaWRYINN/b5fnsd3430NqV4oITDHkw3HC6hgdsBGtDyb/JQXwaWFkZHJlc3Nlc4GiYmlkWCBPnCWoqrWZVuhXi1SwwvvX9HYYTVblu7G2d4fTfy+7wWdhZGRyZXNzo2JJUFAAAAAAAAAAAAAA//8DACrgZFBvcnQZTiBkWm9uZWBpZW50aXR5X2lkWCCJpdeJdUw/FQ44W6nwbuj1CUjww94HBPkZRseaj7JGnmpleHBpcmF0aW9uAHBzb2Z0d2FyZV92ZXJzaW9uczIyLjIuNi1naXRiMmNjZDhlNWU=",
+        "signatures": [
+          {
+            "public_key": "9s7BpJYvtoJO2oqwmpPlIkEMHhIUJtWn9fOAimG1Cys=",
+            "signature": "UJP9CcqkJ4M3mOb58/w732yFqnSutcpELxmLeemn+9IgPl3BmcaoXTl3kKhqSM0lxU3Uv2vApSPD4HT5jtd0BA=="
+          },
+          {
+            "public_key": "T5wlqKq1mVboV4tUsML71/R2GE1W5buxtneH038vu8E=",
+            "signature": "iTwvL60jco8OkaG5PulBI62pZiOLK0PwjuotuD81WP2v+K9V+V2/AitD2XZLteiKeBmBMnblgicc3WvgRLKIBg=="
+          },
+          {
+            "public_key": "039vl+ex3fjfQ2pXighMMeTDccLqGB2wEa0PJv8lBfA=",
+            "signature": "UKlgWBOiBmsQgSPAy7n+OLIuwljpMHPAH+r+OqasvK6drve+gxzDalo0VNnwDSNNk0pTVNfGUd65GGhYm+++Bg=="
+          },
+          {
+            "public_key": "WVmcyGvzxfHmPHTIaE7qdGxWxZGGQoyRNKVw9+rFNRY=",
+            "signature": "sksU3/s+UvgFVlWVrnsJNTQjDiAd7u8Pboc6O/nPNqfLpoAi1LlNZf06oqpCVooHDYmnemRSa+kiAt0aRvQEAQ=="
+          },
+          {
+            "public_key": "+G9SAV7hnwUH0ogJJzg9oPTTBRjmrm98OIA8Im1J+Yw=",
+            "signature": "hK8sb5an2sSdGG6nw1Eex7X8Qq7RCJIDIJ8CdfmrLS9TkVRZDHW/C62Ou5UKVtCDsO64CXrZHVUX1wJy69ObCg=="
+          }
+        ]
+      },
+      {
+        "untrusted_raw_value": "q2F2AmJpZFggPZPOY89GFWxE0YO+xi2TwfORO+UOUPnegzqJzoRfEdZjcDJwomJpZFggTMWJMmQnxlcIQKmoYOmlZOR5VtK8EA4CqMdV+CSb5y9pYWRkcmVzc2Vz9mN0bHOjZ3B1Yl9rZXlYINIbMLnRh8mI/Vkkv6Yr64LjopoBI9R3qHOtH/z3c9sTaWFkZHJlc3Nlc/ZsbmV4dF9wdWJfa2V5WCAXM5GmkTzBE/ew55LehM3rlKhfQso0ryTgeZ6K8h3UkmN2cmahYmlkWCCwNoxzHBbWN7Jd/xxjrL+wGYS5QunBb3d2qUuUqMCsOGVyb2xlcwhocnVudGltZXP2aWNvbnNlbnN1c6JiaWRYIMM9oH5oZyapGV7mk13y9bOdVKyrZUI5sNztfvzcHbE7aWFkZHJlc3Nlc4GiYmlkWCBMxYkyZCfGVwhAqahg6aVk5HlW0rwQDgKox1X4JJvnL2dhZGRyZXNzo2JJUFAAAAAAAAAAAAAA//80TPDFZFBvcnQZTiBkWm9uZWBpZW50aXR5X2lkWCCUkWCDRX1PI+aHSGr/lVnWoWLpECnIo9q1rQSMT1GZwmpleHBpcmF0aW9uAHBzb2Z0d2FyZV92ZXJzaW9uczIyLjIuNi1naXRiMmNjZDhlNWU=",
+        "signatures": [
+          {
+            "public_key": "PZPOY89GFWxE0YO+xi2TwfORO+UOUPnegzqJzoRfEdY=",
+            "signature": "cRxo/qM3/MaR+tMjZYopvXqSsM+sZ2Uw2ZNQYL4hu+kgiA+KuSKIG00f/lX2TyqE7gypOudeyjTG719cYirGCA=="
+          },
+          {
+            "public_key": "TMWJMmQnxlcIQKmoYOmlZOR5VtK8EA4CqMdV+CSb5y8=",
+            "signature": "W/zWcgw8UmIlLC4niAiUnog3eo/84yErATsOHmIvIBvXyrlcj9g2Hx/bAlvyP/UJoaIRV4ufrfeINSizd3qVBg=="
+          },
+          {
+            "public_key": "wz2gfmhnJqkZXuaTXfL1s51UrKtlQjmw3O1+/NwdsTs=",
+            "signature": "og7fy0Lt3ohGzFcLbADOFx+NqOiNRYPb8ZxK7gQCAYZ2pv60XPmX/T4xrg3LApTKmRrKADL7wSvr/w2aKRnsAQ=="
+          },
+          {
+            "public_key": "sDaMcxwW1jeyXf8cY6y/sBmEuULpwW93dqlLlKjArDg=",
+            "signature": "sFlT8CmYDhtpMYgHPTptLuxljuNi4IZGHcLuoCc7sN2WJe7q4CM/A5Ll+nN5sBrrP/OTKSXkvdfNIXaOUvJ8Bw=="
+          },
+          {
+            "public_key": "0hswudGHyYj9WSS/pivrguOimgEj1Heoc60f/Pdz2xM=",
+            "signature": "jyD9gioM+JXnNtU4NFDRcMvlb86S2rOQpAD9yazWHT95iJmulVe/y0+1jkuHT5T/MVjJ1c/O9LpbzJhJu/xvDQ=="
+          }
+        ]
+      }
+    ],
+    "runtimes": [
+      {
+        "v": 3,
+        "id": "00000000000000000000000000000000000000000000000064884141bb9ca059",
+        "entity_id": "Qy6Ug7+GrN+EYutOL7MJgHXpowVhq4d0cn/ON2YAvkE=",
+        "genesis": {
+          "state_root": "c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a",
+          "round": 0
+        },
+        "kind": 1,
+        "tee_hardware": 0,
+        "executor": {
+          "group_size": 3,
+          "group_backup_size": 2,
+          "allowed_stragglers": 1,
+          "round_timeout": 5,
+          "max_messages": 256
+        },
+        "txn_scheduler": {
+          "batch_flush_timeout": 1000000000,
+          "max_batch_size": 1000,
+          "max_batch_size_bytes": 1048576,
+          "propose_batch_timeout": 2
+        },
+        "storage": {
+          "checkpoint_interval": 10000,
+          "checkpoint_num_kept": 2,
+          "checkpoint_chunk_size": 8388608
+        },
+        "admission_policy": {
+          "any_node": {}
+        },
+        "constraints": {
+          "executor": {
+            "backup-worker": {
+              "max_nodes": {
+                "limit": 1
+              },
+              "min_pool_size": {
+                "limit": 2
+              }
+            },
+            "worker": {
+              "max_nodes": {
+                "limit": 1
+              },
+              "min_pool_size": {
+                "limit": 3
+              }
+            }
+          }
+        },
+        "staking": {
+          "min_in_message_fee": "0"
+        },
+        "governance_model": "entity",
+        "deployments": [
+          {
+            "version": {
+              "major": 1,
+              "patch": 1
+            },
+            "valid_from": 0
+          }
+        ]
+      }
+    ]
+  },
+  "roothash": {
+    "params": {
+      "gas_costs": {
+        "compute_commit": 10000,
+        "evidence": 5000,
+        "merge_commit": 10000,
+        "proposer_timeout": 5000,
+        "submit_msg": 1000
+      },
+      "max_runtime_messages": 256,
+      "max_in_runtime_messages": 128,
+      "max_evidence_age": 100
+    }
+  },
+  "staking": {
+    "params": {
+      "thresholds": {
+        "entity": "100000000000000",
+        "node-compute": "100000000000000",
+        "node-keymanager": "100000000000000",
+        "node-validator": "100000000000000",
+        "runtime-compute": "100000000000000",
+        "runtime-keymanager": "100000000000000"
+      },
+      "debonding_interval": 336,
+      "reward_schedule": [
+        {
+          "until": 1,
+          "scale": "0"
+        }
+      ],
+      "signing_reward_threshold_numerator": 3,
+      "signing_reward_threshold_denominator": 4,
+      "commission_schedule_rules": {
+        "rate_change_interval": 0,
+        "rate_bound_lead": 0,
+        "max_rate_steps": 0,
+        "max_bound_steps": 0
+      },
+      "slashing": {
+        "consensus-equivocation": {
+          "amount": "100000000000000",
+          "freeze_interval": 18446744073709551615
+        },
+        "consensus-light-client-attack": {
+          "amount": "100000000000000",
+          "freeze_interval": 18446744073709551615
+        }
+      },
+      "gas_costs": {
+        "add_escrow": 1000,
+        "allow": 1000,
+        "amend_commission_schedule": 1000,
+        "burn": 1000,
+        "reclaim_escrow": 1000,
+        "transfer": 1000,
+        "withdraw": 1000
+      },
+      "min_delegation": "1000000000",
+      "min_transfer": "10000000",
+      "min_transact_balance": "0",
+      "allow_escrow_messages": true,
+      "max_allowances": 16,
+      "fee_split_weight_propose": "0",
+      "fee_split_weight_vote": "0",
+      "fee_split_weight_next_propose": "1",
+      "reward_factor_epoch_signed": "1",
+      "reward_factor_block_proposed": "0",
+      "lambda_minting_curve": 0.0000192,
+      "total_minted_coins": 280000000
+    },
+    "token_symbol": "HELA",
+    "token_value_exponent": 9,
+    "total_supply": "80000000000000000",
+    "common_pool": "0",
+    "last_block_fees": "0",
+    "governance_deposits": "0",
+    "ledger": {
+      "hela01qpqvsctzsku27yqqwee03dxznyyrs330nuqe6q06": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "100000000000000",
+            "total_shares": "100000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qru5qt7fygfd0flhfv2rgwfsk5zlq3uf7uzz2jf7": {
+        "general": {
+          "balance": "77050000000000000"
+        },
+        "escrow": {
+          "active": {
+            "balance": "100000000000000",
+            "total_shares": "100000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qqelpln9eq82epcjd8tqljrdtaau85dcqcp6rcx0": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qrfk8m0p0gk5ew6rwqspa38j2d03vx9lh5larz68": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qrewkpnyg3vsj09p8h2ftfxyr2q8xtg8eyu4r7ry": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qzftyda30xrk69gj7wx9kdlsldthu4z63ctndarh": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qq86ygkcc8rq8ttjfh8swa5t96vwlwf6nykcuhdy": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qrren7vl7995dgf7vevv2p79mz2jjyls55jg2jpy": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qzw36j2ec9ysrtj956au2nccdcxwv4e0u54pph5a": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qp8vg8h7969jyj72ya2vce2tnu9p7s7whgah4q2w": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qp5jl2eccptuq6q3jdknzl608uucymrvzc6kava6": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qzxk6txsltptjeelg3jrvahned6stejjdc8k3azw": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      },
+      "hela01qrqdqf3za4a9r5sav3a2jzwumcqeuyugvve2hzjp": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "250000000000000",
+            "total_shares": "250000000000000"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      }
+    },
+    "delegations": {
+      "hela01qpqvsctzsku27yqqwee03dxznyyrs330nuqe6q06": {
+        "hela01qpqvsctzsku27yqqwee03dxznyyrs330nuqe6q06": {
+          "shares": "100000000000000"
+        }
+      },
+      "hela01qru5qt7fygfd0flhfv2rgwfsk5zlq3uf7uzz2jf7": {
+        "hela01qru5qt7fygfd0flhfv2rgwfsk5zlq3uf7uzz2jf7": {
+          "shares": "100000000000000"
+        }
+      },
+      "hela01qqelpln9eq82epcjd8tqljrdtaau85dcqcp6rcx0": {
+        "hela01qqelpln9eq82epcjd8tqljrdtaau85dcqcp6rcx0": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qrfk8m0p0gk5ew6rwqspa38j2d03vx9lh5larz68": {
+        "hela01qrfk8m0p0gk5ew6rwqspa38j2d03vx9lh5larz68": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qrewkpnyg3vsj09p8h2ftfxyr2q8xtg8eyu4r7ry": {
+        "hela01qrewkpnyg3vsj09p8h2ftfxyr2q8xtg8eyu4r7ry": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qzftyda30xrk69gj7wx9kdlsldthu4z63ctndarh": {
+        "hela01qzftyda30xrk69gj7wx9kdlsldthu4z63ctndarh": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qq86ygkcc8rq8ttjfh8swa5t96vwlwf6nykcuhdy": {
+        "hela01qq86ygkcc8rq8ttjfh8swa5t96vwlwf6nykcuhdy": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qrren7vl7995dgf7vevv2p79mz2jjyls55jg2jpy": {
+        "hela01qrren7vl7995dgf7vevv2p79mz2jjyls55jg2jpy": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qzw36j2ec9ysrtj956au2nccdcxwv4e0u54pph5a": {
+        "hela01qzw36j2ec9ysrtj956au2nccdcxwv4e0u54pph5a": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qp8vg8h7969jyj72ya2vce2tnu9p7s7whgah4q2w": {
+        "hela01qp8vg8h7969jyj72ya2vce2tnu9p7s7whgah4q2w": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qp5jl2eccptuq6q3jdknzl608uucymrvzc6kava6": {
+        "hela01qp5jl2eccptuq6q3jdknzl608uucymrvzc6kava6": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qzxk6txsltptjeelg3jrvahned6stejjdc8k3azw": {
+        "hela01qzxk6txsltptjeelg3jrvahned6stejjdc8k3azw": {
+          "shares": "250000000000000"
+        }
+      },
+      "hela01qrqdqf3za4a9r5sav3a2jzwumcqeuyugvve2hzjp": {
+        "hela01qrqdqf3za4a9r5sav3a2jzwumcqeuyugvve2hzjp": {
+          "shares": "250000000000000"
+        }
+      }
+    }
+  },
+  "keymanager": {},
+  "scheduler": {
+    "params": {
+      "min_validators": 3,
+      "max_validators": 100,
+      "max_validators_per_entity": 1,
+      "reward_factor_epoch_election_any": "0"
+    }
+  },
+  "beacon": {
+    "base": 0,
+    "params": {
+      "backend": "vrf",
+      "vrf_parameters": {
+        "alpha_hq_threshold": 2,
+        "interval": 600,
+        "proof_delay": 400,
+        "gas_costs": {
+          "vrf_prove": 1000
+        }
+      }
+    }
+  },
+  "governance": {
+    "params": {
+      "gas_costs": {
+        "cast_vote": 1000,
+        "submit_proposal": 1000
+      },
+      "min_proposal_deposit": "250000000000000",
+      "voting_period": 168,
+      "stake_threshold": 68,
+      "upgrade_min_epoch_diff": 336,
+      "upgrade_cancel_min_epoch_diff": 192
+    }
+  },
+  "consensus": {
+    "backend": "tendermint",
+    "params": {
+      "timeout_commit": 5000000000,
+      "skip_timeout_commit": false,
+      "empty_block_interval": 0,
+      "max_tx_size": 32768,
+      "max_block_size": 22020096,
+      "max_block_gas": 0,
+      "max_evidence_size": 51200,
+      "state_checkpoint_interval": 100000,
+      "state_checkpoint_num_kept": 2,
+      "state_checkpoint_chunk_size": 8388608,
+      "gas_costs": {
+        "tx_byte": 1
+      }
+    }
+  },
+  "halt_epoch": 18446744073,
+  "extra_data": {
+    "quote": "U1BUQ0tDR1NNUlFTV0tUR0JNWkxTRkxIQlpKU1lDWVRUSCBIRUxB"
+  }
+}

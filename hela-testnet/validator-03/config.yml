@@ -1,0 +1,49 @@
+datadir: .
+log:
+  level:
+    default: debug
+    tendermint: warn
+    tendermint/context: error
+  format: JSON
+  file: ./node.log
+debug:
+  dont_blame_oasis: true
+  allow_root: true
+  allow_test_keys: true
+  rlimit: 50000
+  crash:
+    default: 0.0
+  allow_debug_enclaves: true
+genesis:
+  file: ../genesis.json
+worker:
+  registration:
+    rotate_certs: 1
+    entity: ../entity-03/entity.json
+grpc:
+  log:
+    debug: true
+consensus:
+  validator: true
+  tendermint:
+    core:
+      listen_address: tcp://0.0.0.0:20000
+      external_address: tcp://52.77.242.137:20000
+    min_gas_price: 0
+    submission:
+      gas_price: 0
+    abci:
+      prune:
+        strategy: none
+    supplementarysanity:
+      enabled: true
+      interval: 1
+    p2p:
+      seed:
+        - CEBD14D8E4E9EA10F640E7A7E036EE92983D054A@54.254.214.45:20000
+        - D6E2B5D33D102DDBD747461B1D1A744068A98D66@13.251.129.207:20000
+    debug:
+      addr_book_lenient: true
+      allow_duplicate_ip: true
+    upgrade:
+      stop_delay: 10s

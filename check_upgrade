@@ -1,0 +1,36 @@
+#!/bin/bash
+
+pushd `dirname ${0}` >/dev/null
+
+while [ -f .check_upgrade.lock ] ; do
+    sleep 0.1
+done
+touch .check_upgrade.lock
+
+ts=
+
+[ -x hela-node ] && exec=hela-node || exec=oasis-node
+
+for f in ${exec}.upgrade.* ${exec}.upgrade '' ; do
+    [ -f "$f" ] || continue
+    [[ $f =~ ^${exec}\.upgrade\.[0-9]{10}$ ]] && {
+        ts=${f##*.}
+        break
+    }
+    [ $f = ${exec}.upgrade ] && break
+done
+
+now=`date +%s`
+[ -z "$ts" ] || (( now >= ts )) && {
+    [ -x "$f" -a -x ./$exec ] && {
+        echo "=== find upgrade $exec with ts '$ts' @$now"
+        md5sum $f $exec
+        echo "  $exec => ${exec}.old"
+        echo "  $f => $exec"
+        mv -f $exec ${exec}.old
+        mv "$f" $exec
+    }
+}
+
+rm -f .check_upgrade.lock
+exit 0

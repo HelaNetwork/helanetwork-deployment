@@ -1,0 +1,691 @@
+build_node() {
+  target=build-go ./builder compile -- ../oasis-core
+}
+
+build_runtime() {
+  target=rebuild ./builder compile -- ../emerald-paratime
+}
+
+# $1: clean
+init() {
+  local clean=${1:-true}
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local node=${clients[0]}
+
+  ./builder undeploy -y
+  $clean && {
+  ./builder clean -y
+  ./builder generate
+  }
+  ./builder deploy
+
+  epoch=0
+  while [ "$epoch" != 2 ] ; do
+    epoch=`./builder run -s $node -- "../hela-node control status -a unix:./internal.sock | jq .consensus.latest_epoch"`
+    sleep 2
+  done
+
+  ./builder setup $node --entity=entity-51
+  ./builder setup $node --entity=entity-41
+  ./builder run . --host=$node -- ./hela accounts transfer 190000 0x57D6317E86d6755303acf1CBF664530Ac7F7EE9D --account test:bob \
+      --gas-price 0.000001 --gas-limit 22300
+  ./builder run . --host=$node -- ./hela accounts transfer 1000 entity_41 --no-runtime
+}
+
+# $1: net id
+get_testers() {
+  case $1 in
+  tps-demo|hela-testnet|hela-2309|hela-devnet) ## aws tps-demo
+    echo 54.255.130.194 13.229.96.214 54.254.6.200 13.212.5.190
+    ;;
+  hela-mainnet)
+    echo 54.255.130.194 13.229.96.214
+    ;;
+  ihpc-tps) ## physical machine
+    echo 172.20.117.210 172.20.117.64
+    ;;
+  pcc-testnet)
+    echo 10.9.9.216 10.9.9.217 10.9.9.218 10.9.9.219
+    ;;
+  esac
+}
+
+do_check() {
+  tag=${1:+_}${1}
+
+  local net=`./builder exec -s -- current_network`
+  local testers=(`get_testers $net`)
+
+  #{{{
+  local accounts=`jq .accounts_per_thread tps.json`
+  local backends=(`jq ".backends.\"$net\"" tps.json | sed s'/[][,"]//g'`)
+  [ ${#backends[*]} == 0 ] && {
+    backends=(`./builder exec -s -- get_all_w3_urls`)
+  }
+  local threads=$((${#backends[*]} / ${#testers[*]}))
+  local i
+
+  local chain_id=`curl -sX POST -H "Content-Type: application/json" \
+    --data '{
+      "jsonrpc": "2.0",
+      "method": "eth_chainId",
+      "params": [],
+      "id": '$RANDOM'
+    }' ${backends[0]} | jq -r .result | awk '{printf "%d", $1}'`
+
+  #{{{ kill old and upload tools
+  for ((i=0; i<${#testers[*]}; i++)) ; do
+    [ -z "${testers[i]}" ] && continue
+    ssh -qn ${testers[i]} killall python3
+    rsync -vc tps.json tps.py ${testers[i]}:
+  done
+  #}}}
+  
+  for ((i=0; i<${#testers[*]}; i++)) ; do
+    [ -z "${testers[i]}" ] && continue
+    local PYTHON3=`ssh -qn ${testers[i]} bash -lc "'which python3'"`
+    set -x
+    ssh -qn ${testers[i]} $PYTHON3 tps.py \
+      --check-only \
+      --network=$net \
+      --chain-id=$chain_id \
+      --threads-num=$threads \
+      --backend-offset=$((i*threads)) \
+      --accounts-offset=$((i*threads*accounts)) \
+      >check_${i}${tag}.log 2>&1 &
+    set +x
+  done
+  wait
+  sleep 1
+  #}}}
+}
+
+do_test() {
+  local tag=${1:+_}${1}
+  local net=`./builder exec -s -- current_network`
+  local all_nodes="`./builder exec -s -- get_all_computes` `./builder exec -s -- get_all_clients`"
+  local min_txs=0
+  local testers=(`get_testers $net`)
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local node=${clients[0]}
+  local runtime_id=`./builder exec -s -- get_orc_id`
+
+  #{{{
+  local accounts=`jq .accounts_per_thread tps.json`
+  local backends=(`jq ".backends.\"$net\"" tps.json | sed s'/[][,"]//g'`)
+  [ ${#backends[*]} == 0 ] && {
+    backends=(`./builder exec -s -- get_all_w3_urls`)
+  }
+  local threads=$((${#backends[*]} / ${#testers[*]}))
+  local i h
+
+  local chain_id=`curl -sX POST -H "Content-Type: application/json" --data '{
+    "jsonrpc": "2.0",
+    "method": "eth_chainId",
+    "params": [],
+    "id": '$RANDOM'
+  }' ${backends[0]} | jq -r .result | awk '{printf "%d", $1}'`
+
+  #{{{ kill old and upload tools
+  echo "sync tester..."
+  for ((i=0; i<${#testers[*]}; i++)) ; do
+    [ -z "${testers[i]}" ] && continue
+    ssh -qn ${testers[i]} killall python3
+    rsync -vc tps.json tps.py ${testers[i]}:
+  done
+  #}}}
+
+  sleep 2
+  
+  #{{{ cache nonce
+  echo "caching nonce..."
+  for ((i=0; i<${#testers[*]}; i++)) ; do
+    [ -z "${testers[i]}" ] && continue
+    local PYTHON3=`ssh -qn ${testers[i]} bash -lc "'which python3'"`
+    ssh -qn ${testers[i]} $PYTHON3 tps.py \
+      --network=$net \
+      --chain-id=$chain_id \
+      --read-nonce \
+      --no-check \
+      --threads-num=$threads \
+      --backend-offset=$((i*threads)) \
+      --accounts-offset=$((i*threads*accounts)) \
+      >read_nonce_${i}${tag}.log 2>&1 &
+  done
+  wait
+  #}}}
+
+  #{{{ wait new round
+  : echo "waiting for next round..."
+  : ./builder run --host=$node -- '
+    key=.runtimes.\"'$runtime_id'\"
+    last_round=
+    last_time=`date +%s`
+    while : ; do
+      round=`./hela-node control status -a unix:./'$node'/internal.sock | 
+        jq "$key | .committee.latest_round"`
+      time=`date +%s`
+      [ $round != "$last_round" ] && {
+        echo -e "\nDetected${last_round:+ new} round: $round @$time"
+        [ -n "$last_round" ] && break
+        last_round=$round
+        last_time=$time
+      }
+      elapse=$((time-last_time))
+      echo -ne "\x1b[100D\x1b[K${elapse}s"
+      sleep 1
+    done
+  '
+  #}}}
+
+  ## clear log
+  echo "clearing log..."
+  for h in $all_nodes ; do
+    ./builder exec --host=$h -- remote_run "
+      > hela-deploy/$h/node.log
+      [ -f hela-deploy/w3-gateway-${h#*-}/node.log ] && {
+        > hela-deploy/w3-gateway-${h#*-}/node.log
+      }
+    "
+  done
+
+  local start=`date +%s`
+  ((start+=5))
+  
+  ## run test
+  echo "running test..."
+  for ((i=0; i<${#testers[*]}; i++)) ; do
+    [ -z "${testers[i]}" ] && continue
+    local PYTHON3=`ssh -qn ${testers[i]} bash -lc "'which python3'"`
+    ssh -qn ${testers[i]} $PYTHON3 tps.py \
+      --network=$net \
+      --chain-id=$chain_id \
+      --no-check \
+      --start-time=$start \
+      --threads-num=$threads \
+      --backend-offset=$((i*threads)) \
+      --accounts-offset=$((i*threads*accounts)) \
+      >test_${i}${tag}.log 2>&1 &
+  done
+
+  wait
+  local end=`date +%s`
+
+  #{{{ parse log
+  for h in $all_nodes ; do
+    ./builder exec --host=$h -- remote_run "
+      cat hela-deploy/$h/node.log >~/${h}${tag}.log
+    "
+  done
+  
+  for h in $all_nodes ; do
+    : ./builder exec --host=$h -- remote_run "
+      log_file=~/${h}${tag}.log
+
+      cat \$log_file |
+      jq . |
+      sed 's/\\\\n/\\n/g; s/\\\\t/    /g; s/   0: /\\n   0: /g' |
+      sed -n '
+        :lp /^\\s\\+[0-9]\\+: /{
+        :ag H
+            n
+            /^\\s\\+[0-9]\\+: /{bck;}
+            /^[^ ]/ {bck;}
+            bag
+        :ck x
+            /\\/projects\\/hela\\//{p;z;bnx;}
+            z
+        :nx x
+            blp
+          }
+          p
+      ' >\${log_file%.log}.json
+
+      {
+        echo \"in spawn start,in spawn end\"
+        jq -j '
+          select(.msg == \"in tokio::spawn end\" and .txs >= $min_txs and .type == \"RuntimeCheckTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",\"CheckTx\",\",\",.start,\",\",.end,\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+        jq -j '
+          select(.msg == \"in tokio::spawn end\" and .txs >= $min_txs and .type == \"RuntimeExecuteTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",\"ExecuteTx\",\",\",.start,\",\",.end,\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+
+
+        echo \"recheck\"
+        cat \$log_file |
+          jq 'select(.func == \"_recheck\")' | 
+          jq '._ts = (.ts | sub(\"\\\\.[0-9]+Z\$\"; \"Z\") | fromdate) + (.ts | scan(\"\\\\.[0-9]+\") | tonumber) | ._elapse = (._ts - $start)' |
+          jq -j '._elapse, \",\", .len, \"\n\"'
+        echo -e \"\n\"
+        
+        echo \"republish\"
+        cat \$log_file |
+          jq 'select(.msg == \"republished transactions\")' | 
+          jq '._ts = (.ts | sub(\"\\\\.[0-9]+Z\$\"; \"Z\") | fromdate) + (.ts | scan(\"\\\\.[0-9]+\") | tonumber) | ._elapse = (._ts - $start)' |
+          jq -j '._elapse, \",\", .num_txs, \",\", .next_republish, \"\n\"'
+        echo -e \"\n\"
+
+        
+        echo \"spawn_blocking start,spawn_blocking end\"
+        jq -j '
+          select(.msg == \"tokio::spawn_blocking\" and .txs >= $min_txs and .type == \"RuntimeCheckTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",.ths//empty,\",\",.th_txs,\",\",\"CheckTx\",\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+        jq -j '
+          select(.msg == \"tokio::spawn_blocking\" and .txs >= $min_txs and .type == \"RuntimeExecuteTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",.ths//empty,\",\",.th_txs,\",\",\"ExecuteTx\",\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+
+        echo \"spawn_blocking merge start,spawn_blocking merge end\"
+        jq -j '
+          select(.msg == \"tokio::spawn_blocking merge\" and .txs >= $min_txs and .type == \"RuntimeCheckTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",.ths//empty,\",\",\"CheckTx\",\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+        jq -j '
+          select(.msg == \"tokio::spawn_blocking merge\" and .txs >= $min_txs and .type == \"RuntimeExecuteTxBatchRequest\") |
+          .start-$start,\",\",.end-$start,\",\",.txs,\",\",.ths//empty,\",\",\"ExecuteTx\",\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+
+        echo \"_commit_state,txs\"
+        jq -j '
+          select(.msg == \"_commit_state end\" and .txs >= $min_txs) |
+          .start-$start,\",\",.end-$start,\",\",.txs,\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+
+        echo \"_commit_others dur,txs\"
+        jq -j '
+          select(.msg == \"_commit_others\" and .txs >= $min_txs) |
+          .start-$start,\",\",.end-$start,\",\",.txs,\"\n\"
+        ' \$log_file
+        echo -e \"\n\"
+      } >\${log_file%.log}.csv
+    "
+  done
+  #}}}
+  
+  echo "$start --- $end"
+
+  #{{{ output block by rpc
+  local base_tm=$start
+  local total_txs=0 b
+  ((start-=5))
+  local cur_blk=`curl -sX POST -H "Content-Type: application/json" --data '{
+      "jsonrpc": "2.0",
+      "method": "eth_blockNumber",
+      "params":[],
+      "id": '$RANDOM'
+    }' ${backends[0]} | jq -r .result`
+
+  for ((b=cur_blk; b>=0; b--)) ; do
+    local blk=`printf 0x%x $b`
+    
+    local block=`curl -sX POST -H "Content-Type: application/json" --data '{
+        "jsonrpc": "2.0",
+        "method": "eth_getBlockByNumber",
+        "params": ["'$blk'", false],
+        "id": '$RANDOM'
+      }' ${backends[0]}`
+    
+    local tx_num=`echo "$block" | jq '.result.transactions | length'`
+    tx_num=$((tx_num))
+
+    local ts=`echo "$block" | jq -r .result.timestamp`
+    ts=$((ts))
+    
+    ((ts >= start && ts <= end && tx_num >= min_txs)) && {
+        ((total_txs += tx_num))
+        echo "##, $ts, $blk, $b, $((ts-base_tm)), $tx_num, txs, ##"
+    } || {
+      : echo "$ts: $blk ($b)"
+    }
+
+    ((ts < start)) && break
+  done
+  echo "total txs: $total_txs"
+  #}}}
+  
+  #}}}
+}
+
+send_n() {
+  local remotes= #"`./builder exec -s -- get_all_computes`"
+  local start_acc=${2:+$1}
+  local num_txs=${2:-$1}
+  local net=`./builder exec -s -- current_network`
+  local testers=(`get_testers $net`)
+  local backends=(`jq ".backends.\"$net\"" tps.json | sed s'/[][,"]//g'`)
+  [ ${#backends[*]} == 0 ] && {
+    backends=(`./builder exec -s -- get_all_w3_urls`)
+  }
+
+  local tester=${testers[0]}
+  local chain_id=`curl -sX POST -H "Content-Type: application/json" \
+    --data '{
+      "jsonrpc": "2.0",
+      "method": "eth_chainId",
+      "params": [],
+      "id": '$RANDOM'
+    }' ${backends[0]} | jq -r .result | awk '{printf "%d", $1}'`
+
+  #{{{
+  declare -A last_line
+  for h in $remotes ; do
+    last_line[$h]=`./builder exec -s --host=$h -- remote_run "
+      sed -n '\$=' hela-deploy/$h/node.log
+    "`
+  done
+
+  rsync -vc tps.json send.py $tester:
+  ssh -qn $tester killall python3
+  local PYTHON3=`ssh -qn $tester bash -lc "'which python3'"`
+  set -x
+  ssh -q $tester $PYTHON3 send.py \
+      --network=$net \
+      --chain-id=$chain_id \
+      --accounts-offset=${start_acc:-0} \
+      --num-txs=${num_txs:-1} >send_n.log 2>&1
+  set +x
+
+  for h in $remotes ; do
+    ./builder exec --host=$h -- remote_run "
+      sed -n ${last_line[$h]},'\$p' hela-deploy/$h/node.log >~/$h-send_n.log
+    "
+  done
+  #}}}
+}
+
+test_main() {
+  local net=`./builder exec -s -- current_network`
+  local testers=(`get_testers $net`)
+  local backends=(`jq ".backends.\"$net\"" tps.json | sed s'/[][,"]//g'`)
+  [ ${#backends[*]} == 0 ] && {
+    backends=(`./builder exec -s -- get_all_w3_urls`)
+  }
+  local idx=$((RANDOM % ${#backends[*]}))
+  local tester=${testers[idx]}
+  local chain_id=`curl -sX POST -H "Content-Type: application/json" \
+    --data '{
+      "jsonrpc": "2.0",
+      "method": "eth_chainId",
+      "params": [],
+      "id": '$RANDOM'
+    }' ${backends[idx]} | jq -r .result | awk '{printf "%d", $1}'`
+
+  #{{{
+  rsync -vc tps.json test_main.py $tester:
+  ssh -qn $tester killall python3
+  local PYTHON3=`ssh -qn $tester bash -lc "'which python3'"`
+  ssh -q $tester $PYTHON3 test_main.py \
+      --network=$net \
+      --chain-id=$chain_id \
+      --backend-offset=$idx
+  #}}}
+}
+
+walk_blk() {
+  local now=`date +%s`
+  local with_tx=false
+  local start end
+
+  while [ $# -gt 0 ] ; do
+    case $1 in
+    --start=?*)
+        start=${1#*=}
+        ;;
+    --end=?*)
+        end=${1#*=}
+        ;;
+    --with-tx)
+        with_tx=true
+        ;;
+    *)
+        [ -z "${1//[0-9]}" ] && {
+            [ -z "$start" ] && start=$1 || {
+                [ -z "$end" ] && end=$1
+            }
+        }
+        ;;
+    esac
+    shift
+  done
+
+  local start=${start:-$((now-60))}
+  local end=${end:-$now}
+
+  ((start < 360000)) && start=$((now-start))
+
+  local rpc_url=`./builder exec -s -- get_all_w3_urls | sed -n 1p`
+  #local rpc_url=https://testnet-rpc.helachain.com
+
+  local min_txs=${min_txs:-1}
+  local total_gas_fee=0
+
+  #{{{
+  local total_txs=0 b xBlkNo block tx_num ts
+  local cur_blk=`curl -sX POST -H "Content-Type: application/json" --data '{
+      "jsonrpc": "2.0",
+      "method": "eth_blockNumber",
+      "params":[],
+      "id": '$RANDOM'
+  }' ${rpc_url} | jq -r .result`
+
+  for ((b=cur_blk; b>=0; b--)) ; do
+    xBlkNo=`printf 0x%x $b`
+    
+    block=`curl -sX POST -H "Content-Type: application/json" --data '{
+        "jsonrpc": "2.0",
+        "method": "eth_getBlockByNumber",
+        "params": ["'$xBlkNo'", false],
+        "id": '$RANDOM'
+    }' ${rpc_url}`
+    
+    tx_num=`echo "$block" | jq '.result.transactions | length'`
+    tx_num=$((tx_num))
+
+    ts=`echo "$block" | jq -r .result.timestamp`
+    ts=$((ts))
+    
+    ((ts >= start && ts <= end)) && ((tx_num >= min_txs)) && {
+        ((total_txs += tx_num))
+        echo "##, $ts, $xBlkNo, $b, $((ts-start)), $((now-ts)), $tx_num, txs, ##"
+        echo "$block" | jq -r 'del(.result.transactions)'
+        
+        $with_tx && {
+            while read tx_hash ; do
+              tx=`curl -sX POST -H "Content-Type: application/json" --data '{
+                "jsonrpc": "2.0",
+                "method": "eth_getTransactionByHash",
+                "params": ["'$tx_hash'"],
+                "id": '$RANDOM'
+              }' ${rpc_url} | jq -c .`
+              gas_price=`echo "$tx" | jq -r .result.gasPrice`
+              echo "transaction:"
+              echo "$tx" | jq #-j '.result | .from,",",.to,"\n"'
+
+              receipt=`curl -sX POST -H "Content-Type: application/json" --data '{
+                "jsonrpc": "2.0",
+                "method": "eth_getTransactionReceipt",
+                "params": ["'$tx_hash'"],
+                "id": '$RANDOM'
+              }' ${rpc_url} | jq -c .`
+              echo "receipt:"
+              echo "$receipt" | jq
+              gas_used=`echo "$receipt" | jq -r .result.gasUsed`
+
+              ((total_gas_fee += gas_price/1000000000*gas_used))
+            done < <(echo "$block" | jq -r .result.transactions[])
+            echo 
+        }
+    }
+  
+    ((ts < start)) && break
+  done
+  echo "# total txs: $total_txs"
+  echo "# total gas fee: `echo | awk "{print $total_gas_fee/1e9}"`"
+  #}}}
+}
+
+wait_new_epoch() {
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local node=${clients[0]}
+  local last_epoch=${1}
+  ./builder run -s --host=$node -- '
+    last_epoch='$last_epoch'
+    while : ; do
+      epoch=`./hela-node control status -a unix:./'$node'/internal.sock | jq ".consensus.latest_epoch" 2>/dev/null`
+      [ -n "$epoch" -a "$epoch" != "$last_epoch" ] && {
+        [ -n "$last_epoch" ] && break
+        last_epoch=$epoch
+      }
+      sleep 1
+    done
+    echo $epoch
+  '
+}
+
+wait_runtime_new_round() {
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local node=${clients[0]}
+  local runtime_id=`./builder exec -s -- get_orc_id`
+  local last_round=${1}
+  ./builder run -s --host=$node -- '
+    last_round='$last_round'
+    while : ; do
+      round=`./hela-node control status -a unix:./'$node'/internal.sock | jq ".runtimes.\"'$runtime_id'\".committee.latest_round"`
+      [ $round != "$last_round" ] && {
+        [ -n "$last_round" ] && break
+        last_round=$round
+      }
+      sleep 1
+    done
+    echo $round
+  '
+}
+
+build_upgrade_runtime() {
+  #<<<
+  patch=`sed -n 's/^version\s*=\s*"[0-9]\+\.[0-9]\+\.\([0-9]\+\)-.*"/\1/p' ../emerald-paratime/Cargo.toml`
+  ((patch++))
+  sed -i 's/\(^version\s*=\s*"[0-9]\+\.[0-9]\+\.\)[0-9]\+\(-.*"\)/\1'$patch'\2/' ../emerald-paratime/Cargo.toml
+  
+  target=rebuild ./builder compile -- ../emerald-paratime && {
+    ./builder exec -- upgrade_runtime runtime-hela-evm || 
+    ./builder exec -- upgrade_runtime runtime-hela-evm 
+  } && { 
+    ./builder stop client-?? compute-??
+    ./builder start client-?? compute-??
+    echo "waiting next round"
+    wait_new_epoch
+    echo "patch: $patch"
+  } || {
+    ((patch--))
+    sed -i 's/\(^version\s*=\s*"[0-9]\+\.[0-9]\+\.\)[0-9]\+\(-.*"\)/\1'$patch'\2/' ../emerald-paratime/Cargo.toml
+  }
+  #>>>
+}
+
+build_upgrade_node() {
+    target=build-go ./builder compile -- ../oasis-core &&
+    ./builder exec client-?? compute-?? -- update_oasis_node_binary && {
+        ./builder stop client-?? compute-??
+        ./builder start client-?? compute-??
+    }
+}
+
+check_tokenization() {
+  local acc entity addr balance
+  local net=`./builder exec -s -- current_network`
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local cli_node=${clients[0]}
+
+  [ "$net" != hela-testnet -o "$net" != hela-mainnet ] && local tax_addr=hela01qqgthu582dkvkjxnhusg9gt8dh69jy0hfyt78p36
+
+  for acc in `./builder exec -s -- get_all_computes` tax ; do
+    [ $acc = tax ] && entity=entity-53 || entity=`./builder exec -s -- get_compute_entity $acc`
+    addr=`./builder exec -s -- get_entity_address $entity`
+    [ $acc = tax -a -n "$tax_addr" ] && addr=$tax_addr
+    balance=`./builder run -s --host=$cli_node -- ./hela accounts show $addr | sed -n '/EXECUTION LAYER/,$ s/^\s*\([0-9.]\+\) HLUSD/\1/p'`
+
+    echo "  $acc:"
+    echo "     entity: $entity"
+    echo "    address: $addr"
+    echo "    balance: ${balance:-0}"
+  done
+}
+
+eval_gas_fee() {
+  local wait_cmd=${1:-sleep 60}
+  local acc entity addr
+  local -A balance_s balance_e
+
+  local net=`./builder exec -s -- current_network`
+  local clients=(`./builder exec -s -- get_all_clients`)
+  local cli_node=${clients[0]}
+
+  [ "$net" != hela-testnet -o "$net" != hela-mainnet ] && local tax_addr=hela01qqgthu582dkvkjxnhusg9gt8dh69jy0hfyt78p36
+
+  echo "waiting for new round..."
+  local round=`wait_runtime_new_round`
+  time local next_round=`wait_runtime_new_round $round`
+  echo "$round => $next_round"
+  local start=`date +%s`
+
+  echo "start point:"
+  for acc in `./builder exec -s -- get_all_computes` tax ; do
+    [ $acc = tax ] && entity=entity-53 || entity=`./builder exec -s -- get_compute_entity $acc`
+    addr=`./builder exec -s -- get_entity_address $entity`
+    [ $acc = tax -a -n "$tax_addr" ] && addr=$tax_addr
+    balance_s[$acc]=`./builder run -s --host=$cli_node -- ./hela accounts show $addr | sed -n '/EXECUTION LAYER/,$ s/^\s*\([0-9.]\+\) HLUSD/\1/p'`
+
+    echo "  $acc:"
+    echo "     entity: $entity"
+    echo "    address: $addr"
+    echo "    balance: ${balance_s[$acc]:-0}"
+  done
+
+  echo "running: $wait_cmd..."
+  $wait_cmd
+
+  echo "waiting for new round..."
+  local round=`wait_runtime_new_round`
+  time local next_round=`wait_runtime_new_round $round`
+  echo "$round => $next_round"
+  local end=`date +%s`
+
+  echo "end point:"
+  for acc in `./builder exec -s -- get_all_computes` tax ; do
+    [ $acc = tax ] && entity=entity-53 || entity=`./builder exec -s -- get_compute_entity $acc`
+    addr=`./builder exec -s -- get_entity_address $entity`
+    [ $acc = tax -a -n "$tax_addr" ] && addr=$tax_addr
+    balance_e[$acc]=`./builder run -s --host=$cli_node -- ./hela accounts show $addr | sed -n '/EXECUTION LAYER/,$ s/^\s*\([0-9.]\+\) HLUSD/\1/p'`
+
+    echo "  $acc:"
+    echo "     entity: $entity"
+    echo "    address: $addr"
+    echo "    balance: ${balance_e[$acc]:-0}"
+  done
+
+  echo "diff:"
+  for acc in `./builder exec -s -- get_all_computes` tax ; do
+    [ $acc = tax ] && entity=entity-53 || entity=`./builder exec -s -- get_compute_entity $acc`
+    addr=`./builder exec -s -- get_entity_address $entity`
+    [ $acc = tax -a -n "$tax_addr" ] && addr=$tax_addr
+
+    echo "  $acc:"
+    echo "     entity: $entity"
+    echo "    address: $addr"
+    echo "       diff: `echo | awk "{print ${balance_e[$acc]:-0}-${balance_s[$acc]:-0}}"`"
+  done
+
+  echo "blks:"
+  walk_blk $start $end | grep "^#"
+}

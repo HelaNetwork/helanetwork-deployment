@@ -1,0 +1,44 @@
+{
+  "v": 3,
+  "id": "00000000000000000000000000000000000000000000000072c8215e60d5bca7",
+  "entity_id": "ssnSuYkcWxa6AhE7RSWIHkIR6JAcG2AJ1zfrtcuWJYk=",
+  "genesis": {
+    "state_root": "c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a",
+    "round": 0
+  },
+  "kind": 1,
+  "tee_hardware": 0,
+  "executor": {
+    "group_size": 2,
+    "group_backup_size": 1,
+    "allowed_stragglers": 0,
+    "round_timeout": 20,
+    "max_messages": 128
+  },
+  "txn_scheduler": {
+    "batch_flush_timeout": 1000000000,
+    "max_batch_size": 20,
+    "max_batch_size_bytes": 1048576,
+    "propose_batch_timeout": 2
+  },
+  "storage": {
+    "checkpoint_interval": 0,
+    "checkpoint_num_kept": 0,
+    "checkpoint_chunk_size": 0
+  },
+  "admission_policy": {
+    "any_node": {}
+  },
+  "staking": {
+    "min_in_message_fee": "0"
+  },
+  "governance_model": "entity",
+  "deployments": [
+    {
+      "version": {
+        "major": 0
+      },
+      "valid_from": 0
+    }
+  ]
+}

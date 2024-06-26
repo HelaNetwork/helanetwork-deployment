@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+
+  # For backend only
+  mysql:
+        container_name: mysql57
+        image: mysql:5.7.32
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        volumes:
+            - ./docker/mysql/data:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_DATABASE: oasis
+        ports:
+            - 3306:3306
+  elasticsearch:
+      container_name: es-container
+      image: elasticsearch:7.0.0
+      volumes:
+          - /media/neeson/data/esdata:/usr/share/elasticsearch/data
+      environment:
+          - xpack.security.enabled=false
+          - "discovery.type=single-node"
+          - "ES_JAVA_OPTS=-Xms4096m -Xmx4096m"
+      ports:
+          - 9200:9200
+          - 9300:9300
+          
+
+
+  # For frontend (wallet) only
+  # oasis-explorer:
+  #   build: docker/oasis-explorer
+  #   restart: always
+  #   ports:
+  #     - '9001:9001'
+  #   volumes:
+  #     - /home/neeson/Projects/hela-one/hela-node/data:/node/data:z
+  #     - /home/neeson/Projects/hela-one/hela-node/etc/genesis.json:/genesis.json:z
+  #     - ./docker/oasis-explorer/config-local.json:/.secrets/config.json:z
+  envoy:
+    image: docker.io/envoyproxy/envoy:v1.21.3
+    ports:
+      - '42280:42280'
+      - '42281:42281'
+    command: envoy -c /etc/envoy/envoy.yaml --component-log-level upstream:debug,connection:trace
+    environment:
+      ENVOY_UID: 0
+      ENVOY_GID: 0
+    volumes:
+      - /home/neeson/Projects/hela-one/hela-node/data:/node/data:z
+      - ./docker/envoy.yaml:/etc/envoy/envoy.yaml:z
+
+  postgres:
+    image: docker.io/library/postgres:15.0-alpine
+    restart: always
+    volumes:
+      - explorer-postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: oasis
+      POSTGRES_USER: oasis
+      POSTGRES_DATABASE: oasis
+    command: -p 5432
+
+  clickhouse:
+    image: docker.io/yandex/clickhouse-server:22.1.3-alpine
+    restart: always
+    volumes:
+      - explorer-clickhouse-data:/var/lib/clickhouse:z
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+
+volumes:
+  postgres-data:
+  explorer-postgres-data:
+  explorer-clickhouse-data:

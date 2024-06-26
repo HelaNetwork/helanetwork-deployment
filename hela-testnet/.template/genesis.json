@@ -1,0 +1,186 @@
+{
+  "height": 1,
+  "genesis_time": "2023-01-20T00:55:11.680792185+08:00",
+  "chain_id": "hela:testnet",
+  "registry": {
+    "params": {
+      "disable_entity_registration": true,
+      "gas_costs": {
+        "deregister_entity": 1000,
+        "prove_freshness": 1000,
+        "register_entity": 1000,
+        "register_node": 1000,
+        "register_runtime": 1000,
+        "runtime_epoch_maintenance": 1000,
+        "unfreeze_node": 1000,
+        "update_keymanager": 1000
+      },
+      "max_node_expiration": 5,
+      "enable_runtime_governance_models": {
+        "entity": true,
+        "runtime": true
+      }
+    },
+    "entities": [
+    ],
+    "nodes": [
+    ],
+    "runtimes": [
+    ]
+  },
+  "roothash": {
+    "params": {
+      "gas_costs": {
+        "compute_commit": 10000,
+        "evidence": 5000,
+        "merge_commit": 10000,
+        "proposer_timeout": 5000,
+        "submit_msg": 1000
+      },
+      "max_runtime_messages": 256,
+      "max_in_runtime_messages": 128,
+      "max_evidence_age": 100
+    }
+  },
+  "staking": {
+    "params": {
+      "thresholds": {
+        "entity": "100000000000000",
+        "node-compute": "100000000000000",
+        "node-keymanager": "100000000000000",
+        "node-validator": "100000000000000",
+        "runtime-compute": "100000000000000",
+        "runtime-keymanager": "100000000000000"
+      },
+      "debonding_interval": 336,
+      "reward_schedule": [
+        {
+          "until": 1,
+          "scale": "0"
+        }
+      ],
+      "signing_reward_threshold_numerator": 3,
+      "signing_reward_threshold_denominator": 4,
+      "commission_schedule_rules": {
+        "rate_change_interval": 0,
+        "rate_bound_lead": 0,
+        "max_rate_steps": 0,
+        "max_bound_steps": 0
+      },
+      "slashing": {
+        "consensus-equivocation": {
+          "amount": "100000000000000",
+          "freeze_interval": 18446744073709551615
+        },
+        "consensus-light-client-attack": {
+          "amount": "100000000000000",
+          "freeze_interval": 18446744073709551615
+        }
+      },
+      "gas_costs": {
+        "add_escrow": 1000,
+        "allow": 1000,
+        "amend_commission_schedule": 1000,
+        "burn": 1000,
+        "reclaim_escrow": 1000,
+        "transfer": 1000,
+        "withdraw": 1000
+      },
+      "min_delegation": "1000000000",
+      "min_transfer": "10000000",
+      "min_transact_balance": "0",
+      "allow_escrow_messages": true,
+      "max_allowances": 16,
+      "fee_split_weight_propose": "0",
+      "fee_split_weight_vote": "0",
+      "fee_split_weight_next_propose": "1",
+      "reward_factor_epoch_signed": "1",
+      "reward_factor_block_proposed": "0",
+      "lambda_minting_curve": 1.92e-05,
+      "total_minted_coins": 280000000
+    },
+    "token_symbol": "HELA",
+    "token_value_exponent": 9,
+    "total_supply": "0",
+    "common_pool": "0",
+    "last_block_fees": "0",
+    "governance_deposits": "0",
+    "ledger": {
+      "__staking_account__": {
+        "general": {
+          "balance": "0"
+        },
+        "escrow": {
+          "active": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "debonding": {
+            "balance": "0",
+            "total_shares": "0"
+          },
+          "commission_schedule": {},
+          "stake_accumulator": {}
+        }
+      }
+    },
+    "delegations": {
+    }
+  },
+  "keymanager": {},
+  "scheduler": {
+    "params": {
+      "min_validators": 3,
+      "max_validators": 100,
+      "max_validators_per_entity": 1,
+      "reward_factor_epoch_election_any": "0"
+    }
+  },
+  "beacon": {
+    "base": 0,
+    "params": {
+      "backend": "vrf",
+      "vrf_parameters": {
+        "alpha_hq_threshold": 2,
+        "interval": 600,
+        "proof_delay": 400,
+        "gas_costs": {
+          "vrf_prove": 1000
+        }
+      }
+    }
+  },
+  "governance": {
+    "params": {
+      "gas_costs": {
+        "cast_vote": 1000,
+        "submit_proposal": 1000
+      },
+      "min_proposal_deposit": "250000000000000",
+      "voting_period": 168,
+      "stake_threshold": 68,
+      "upgrade_min_epoch_diff": 336,
+      "upgrade_cancel_min_epoch_diff": 192
+    }
+  },
+  "consensus": {
+    "backend": "tendermint",
+    "params": {
+      "timeout_commit": 5000000000,
+      "skip_timeout_commit": false,
+      "empty_block_interval": 0,
+      "max_tx_size": 32768,
+      "max_block_size": 22020096,
+      "max_block_gas": 0,
+      "max_evidence_size": 51200,
+      "state_checkpoint_interval": 100000,
+      "state_checkpoint_num_kept": 2,
+      "state_checkpoint_chunk_size": 8388608,
+      "gas_costs": {
+        "tx_byte": 1
+      }
+    }
+  },
+  "halt_epoch": 18446744073,
+  "extra_data": null
+}

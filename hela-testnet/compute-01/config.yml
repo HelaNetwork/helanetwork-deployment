@@ -1,0 +1,68 @@
+datadir: .
+log:
+  level:
+    default: info
+    tendermint: warn
+    tendermint/context: error
+  format: JSON
+  file: ./node.log
+debug:
+  dont_blame_oasis: true
+  allow_root: true
+  allow_test_keys: true
+  rlimit: 50000
+  crash:
+    default: 0.0
+  allow_debug_enclaves: true
+genesis:
+  file: ../genesis.json
+worker:
+  registration:
+    rotate_certs: 0
+    entity: ../entity-21/entity.json
+  client:
+    port: 20100
+  p2p:
+    port: 20101
+    addresses:
+      - 13.212.208.18:20101
+  storage:
+    backend: badger
+    public_rpc:
+      enabled: true
+    checkpoint_sync:
+      disabled: true
+    checkpointer:
+      enabled: true
+runtime:
+  mode: compute
+  provisioner: unconfined
+  sgx:
+    loader: oasis-core-runtime-loader
+  paths:
+    - ../runtime-hela-evm/hela-evm-runtime-1-0-4.orc
+    - ../runtime-hela-evm/hela-evm-runtime-1-0-5.orc
+    - ../runtime-hela-evm/hela-evm-runtime-1-0-6.orc
+grpc:
+  log:
+    debug: true
+consensus:
+  tendermint:
+    core:
+      listen_address: tcp://0.0.0.0:20000
+      external_address: tcp://13.212.208.18:20000
+    min_gas_price: 0
+    submission:
+      gas_price: 0
+    abci:
+      prune:
+        strategy: none
+    p2p:
+      seed:
+        - CEBD14D8E4E9EA10F640E7A7E036EE92983D054A@54.254.214.45:20000
+        - D6E2B5D33D102DDBD747461B1D1A744068A98D66@13.251.129.207:20000
+    debug:
+      addr_book_lenient: true
+      allow_duplicate_ip: true
+    upgrade:
+      stop_delay: 10s

@@ -1,0 +1,72 @@
+{
+  "v": 3,
+  "id": "000000000000000000000000000000000000000000000000324f850f9a308d98",
+  "entity_id": "3l7x1GB0V8mhA5GfhOTYLaIRurd7IF+8dEtKWAYlbXI=",
+  "genesis": {
+    "state_root": "c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a",
+    "round": 0
+  },
+  "kind": 1,
+  "tee_hardware": 0,
+  "executor": {
+    "group_size": 3,
+    "group_backup_size": 1,
+    "allowed_stragglers": 1,
+    "round_timeout": 5,
+    "max_messages": 256
+  },
+  "txn_scheduler": {
+    "batch_flush_timeout": 1000000000,
+    "max_batch_size": 10000,
+    "max_batch_size_bytes": 20971520,
+    "propose_batch_timeout": 2
+  },
+  "storage": {
+    "checkpoint_interval": 10000,
+    "checkpoint_num_kept": 2,
+    "checkpoint_chunk_size": 8388608
+  },
+  "admission_policy": {
+    "any_node": {}
+  },
+  "constraints": {
+    "executor": {
+      "backup-worker": {
+        "max_nodes": {
+          "limit": 1
+        },
+        "min_pool_size": {
+          "limit": 1
+        }
+      },
+      "worker": {
+        "max_nodes": {
+          "limit": 1
+        },
+        "min_pool_size": {
+          "limit": 3
+        }
+      }
+    }
+  },
+  "staking": {
+    "min_in_message_fee": "0"
+  },
+  "governance_model": "entity",
+  "deployments": [
+    {
+      "version": {
+        "major": 1,
+        "patch": 5
+      },
+      "valid_from": 7035
+    },
+    {
+      "version": {
+        "major": 1,
+        "patch": 6
+      },
+      "valid_from": 7711
+    }
+  ]
+}

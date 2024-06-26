@@ -1,0 +1,239 @@
+#!/bin/bash
+#
+
+remote_run() {
+    local cmd param
+    local login_param
+    local silent=false
+    local ssh_args="-t -o StrictHostKeyChecking=no ${login_key:+-i} $login_key"
+
+    [ "$1" = -l ] && {
+        login_param=$1
+        shift
+    }
+    [ "$1" = -s ] && {
+        silent=true
+        shift
+    }
+
+    local user=$login_user
+    local host=${1}
+
+    [ "$host" != "${host/:}" ] && {
+        ssh_args="$ssh_args -p ${host#*:}"
+        host=${host%:*}
+    }
+
+    shift
+
+    local tmp_file=`mktemp -u -p /dev/shm tmp.XXXXXX.sh`
+    local ssh=`which ssh`
+
+    $silent || echo -e "\n=========== Running in $user${user:+@}$host : <<<$@>>>" >&2
+    echo "$@" | $ssh $ssh_args $user${user:+@}$host "cat >$tmp_file; trap 'rm -f $tmp_file' EXIT; bash $login_param $tmp_file" 2>$tmp_file
+    [ $? != 0 ] && {
+        echo -ne "\x1b[1;31m"
+        cat $tmp_file
+        echo -ne "\x1b[0m"
+    }
+    rm -f $tmp_file
+}
+
+# user_name ip...
+create_user() {
+    local username=$1 ip
+    shift
+    [ -z "$username" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -S useradd $username -m -s /bin/bash < <(echo $login_pass)
+            sudo -S -u $username mkdir -p -m 700 /home/$username/.ssh < <(echo $login_pass)
+        "
+    done
+}
+
+# user_name ip...
+gen_ssh_key() {
+    local username=$1 ip
+    shift
+    [ -z "$username" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -S -u $username ssh-keygen -P '' < <(echo)
+        " < <(echo $login_pass)
+    done
+}
+
+# user_name ip...
+enable_sudo() {
+    local username=$1 ip
+    shift
+    [ -z "$username" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -S bash -c '
+                echo \"$username ALL=(ALL:ALL) NOPASSWD:ALL\" >/etc/sudoers.d/hela-$username
+            ' < <(echo $login_pass)
+        "
+    done
+}
+disable_sudo() {
+    local username=$1 ip
+    shift
+    [ -z "$username" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -S bash -c '
+                [ -f /etc/sudoers.d/hela-$username ] && rm -f /etc/sudoers.d/hela-$username
+            ' < <(echo $login_pass)
+        "
+    done
+}
+
+# user_name ip...
+get_pub_key() {
+    local username=$1 ip
+    shift
+    [ -z "$username" ] && return
+    for ip in $@ ; do
+        remote_run -s $ip "
+            sudo -S bash -c \"
+                [ -f /home/$username/.ssh/id_rsa.pub ] && cat /home/$username/.ssh/id_rsa.pub
+            \" < <(echo $login_pass)
+        "
+    done
+}
+
+# user_name "key" ip...
+add_pub_key() {
+    local username=$1 key="$2" ip
+    shift 2
+    [ -z "$username" ] && return
+    [ -z "$key" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -SH -u $username bash -c \"
+                cd \\\$HOME
+                [ -d .ssh ] || mkdir .ssh
+                grep \\\"^$key\\\" .ssh/authorized_keys >/dev/null 2>&1 && exit 0
+                echo \\\"$key\\\" >> .ssh/authorized_keys
+                chmod 600 .ssh/authorized_keys
+            \" < <(echo $login_pass)
+        "
+    done
+}
+set_pub_key() {
+    local username=$1 key="$2" ip
+    shift 2
+    [ -z "$username" ] && return
+    [ -z "$key" ] && return
+    for ip in $@ ; do
+        remote_run $ip "
+            sudo -SH -u $username bash -c \"
+                cd \\\$HOME
+                [ -d .ssh ] || mkdir .ssh
+                echo \\\"$key\\\" > .ssh/authorized_keys
+                chmod 600 .ssh/authorized_keys
+            \" < <(echo $login_pass)
+        "
+    done
+}
+
+# cmd ip...
+run_cmd() {
+    local cmd=$1 ip
+    shift
+    for ip in $@ ; do
+        [ -z "$cmd" ] && continue
+        remote_run $ip "
+            $cmd
+        "
+    done
+}
+
+func=
+addresses=
+user=
+key=
+cmd=
+login_user=
+login_pass=
+login_key=
+
+. ./config
+
+while [ $# -gt 0 ] ; do
+    arg=$1
+    shift
+
+    case $arg in
+    create_user|gen_ssh_key|add_pub_key|set_pub_key|get_pub_key|enable_sudo|disable_sudo|run_cmd)
+        func=$arg
+        ;;
+    --nodes=?*|--node=?*)
+        nodes=${arg#*=}
+        for node in ${nodes//,/ } ; do
+            if [ -z "${node//[0-9\.]}" ] ; then
+                addresses="$addresses${addresses:+ }$node"
+            else
+                for ip in ${!SERVICES[*]} ; do
+                    for svc in ${SERVICES[$ip]} ; do
+                        [ "$svc" != "${svc#${node}-}" -o "$svc" = "$node" ] && {
+                            addresses="$addresses${addresses:+ }$ip"
+                            break
+                        }
+                    done
+                done
+            fi
+        done
+        ;;
+    --user=?*)
+        user=${arg#*=}
+        ;;
+    --key=?*)
+        key="${arg#*=}"
+        ;;
+    --cmd=?*)
+        cmd=${arg#*=}
+        ;;
+    --login-user=?*)
+        login_user=${arg#*=}
+        ;;
+    --login-pass=?*)
+        login_pass=${arg#*=}
+        ;;
+    --login-key=?*)
+        login_key=${arg#*=}
+        ;;
+    esac
+done
+
+[ -z "$addresses" ] && {
+    echo "usage: ${0##*/} create_user|gen_ssh_key|add_pub_key|set_pub_key|get_pub_key|enable_sudo|disable_sudo|run_cmd"
+    echo "       --user= --key= --node= --cmd= --login-user= --login-pass= --login-key="
+    exit 1
+}
+
+case $func in
+create_user|gen_ssh_key|get_pub_key|enable_sudo|disable_sudo)
+    [ -z "$user" ] && {
+        echo "no user!"
+        exit 1
+    }
+    $func $user $addresses
+    ;;
+add_pub_key|set_pub_key)
+    [ -z "$user" -o -z "$key" ] && {
+        echo "no user or key!"
+        exit 1
+    }
+    $func $user "$key" $addresses
+    ;;
+run_cmd)
+    [ -z "$cmd" ] && {
+        echo "no cmd!"
+        exit 1
+    }
+    $func "$cmd" $addresses
+    ;;
+esac

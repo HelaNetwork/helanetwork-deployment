@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -x
+
+cp ../oasis-core/go/oasis-node/oasis-node .
+cp ../cli/hela .
+cp ../oasis-web3-gateway/oasis-web3-gateway .
+cp ../emerald-paratime/hela-evm.orc .

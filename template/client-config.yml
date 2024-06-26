@@ -1,0 +1,82 @@
+datadir: .
+
+# Logging.
+#
+# Per-module log levels are defined below. If you prefer just one unified log
+# level, you can use:
+#
+# log:
+#   level: debug
+log:
+  level:
+    # Per-module log levels. Longest prefix match will be taken. Fallback to
+    # "default", if no match.
+    default: info
+    tendermint: warn
+    tendermint/context: error
+  format: JSON
+  file: ./node.log
+  # By default logs are output to stdout. If you would like to output logs to
+  # a file, you can use:
+  #
+  # file: /var/log/oasis-node.log
+
+debug:
+  dont_blame_oasis: true
+  allow_root: true
+  allow_test_keys: true
+  rlimit: 50000
+  crash:
+    default: 0.000000
+  allow_debug_enclaves: true
+
+# Genesis.
+genesis:
+  # Path to the genesis file for the current version of the network.
+  file: ../genesis.json
+
+# Worker configuration.
+worker:
+  p2p:
+    port: 20033
+
+runtime:
+  mode: client
+  provisioner: unconfined
+  paths: []
+  config:
+    "00000000000000000000000000000000000000000000000072c8215e60d5bca7":
+      allow_expensive_queries: true
+
+grpc:
+  log:
+    debug: true
+
+# Consensus backend.
+consensus:
+  # Tendermint backend configuration.
+  tendermint:
+    core:
+      listen_address: tcp://0.0.0.0:20013
+
+      # The external IP that is used when registering this node to the network.
+      # NOTE: If you are using the Sentry node setup, this option should be
+      # omitted.
+      external_address: tcp://192.168.14.82:20013
+
+    abci:
+      prune:
+        strategy: none
+    #supplementarysanity:
+    #  enabled: true
+    #  interval: 1
+
+    # List of seed nodes to connect to.
+    # NOTE: You can add additional seed nodes to this list if you want.
+    p2p:
+      seed: []
+    debug:
+      addr_book_lenient: true
+      allow_duplicate_ip: true
+    upgrade:
+      stop_delay: 10s

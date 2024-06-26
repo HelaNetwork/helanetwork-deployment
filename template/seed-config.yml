@@ -1,0 +1,28 @@
+datadir: .
+
+log:
+  level: debug
+  format: JSON
+  file: ./node.log
+
+debug:
+  dont_blame_oasis: true
+  allow_root: true
+  allow_test_keys: true
+  rlimit: 50000
+  allow_debug_enclaves: true
+
+genesis:
+  file: ../genesis.json
+
+consensus:
+  tendermint:
+    mode: seed
+    core:
+      listen_address: tcp://0.0.0.0:20000
+      external_address: tcp://0.0.0.0:20000
+    debug:
+      addr_book_lenient: true
+      allow_duplicate_ip: true
+    upgrade:
+      stop_delay: 10s

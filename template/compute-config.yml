@@ -1,0 +1,99 @@
+datadir: .
+
+# Logging.
+#
+# Per-module log levels are defined below. If you prefer just one unified log
+# level, you can use:
+#
+# log:
+#   level: debug
+log:
+  level:
+    # Per-module log levels. Longest prefix match will be taken. Fallback to
+    # "default", if no match.
+    default: info
+    tendermint: warn
+    tendermint/context: error
+  format: JSON
+  # By default logs are output to stdout. If you would like to output logs to
+  # a file, you can use:
+  #
+  # file: /var/log/oasis-node.log
+  file: ./node.log
+
+debug:
+  dont_blame_oasis: true
+  allow_root: true
+  allow_test_keys: true
+  rlimit: 50000
+  crash:
+    default: 0.000000
+  allow_debug_enclaves: true
+
+# Genesis.
+genesis:
+  # Path to the genesis file for the current version of the network.
+  file: ../genesis.json
+
+# Worker configuration.
+worker:
+  registration:
+    rotate_certs: 0
+    # In order for the node to register itself, the entity.json of the entity
+    # used to provision the node must be available on the node.
+    entity: ../entity-06/entity.json
+  client:
+    port: 20020
+  p2p:
+    port: 20030
+  storage:
+    backend: badger
+    public_rpc:
+      enabled: true
+    checkpoint_sync:
+      disabled: true
+    checkpointer:
+      enabled: true
+
+runtime:
+  mode: compute
+  provisioner: unconfined
+  sgx:
+    loader: oasis-core-runtime-loader
+  paths: []
+
+grpc:
+  log:
+    debug: true
+
+# Consensus backend.
+consensus:
+  # Tendermint backend configuration.
+  tendermint:
+    core:
+      listen_address: tcp://0.0.0.0:20010
+
+      # The external IP that is used when registering this node to the network.
+      # NOTE: If you are using the Sentry node setup, this option should be
+      # omitted.
+      external_address: tcp://192.168.14.82:20010
+
+    min_gas_price: 0
+    submission:
+      gas_price: 0
+    abci:
+      prune:
+        strategy: none
+    #supplementarysanity:
+    #  enabled: true
+    #  interval: 1
+
+    # List of seed nodes to connect to.
+    # NOTE: You can add additional seed nodes to this list if you want.
+    p2p:
+      seed: []
+    debug:
+      addr_book_lenient: true
+      allow_duplicate_ip: true
+    upgrade:
+      stop_delay: 10s

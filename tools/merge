@@ -1,0 +1,66 @@
+#!/bin/bash
+
+files=($*)
+fds=()
+lines=()
+forward=()
+
+for ((i=0; i<${#files[*]}; i++)) ; do
+    exec {FD}<> ${files[i]}
+    fds[i]=$FD
+    while read -u ${fds[i]} x ; do
+        [ "$x" != "${x#timestamp,}" ] && break
+    done
+    forward[i]=true
+done
+
+echo "$x"
+
+while :; do
+    for ((i=0; i<${#fds[@]}; i++)) ; do
+        ${forward[i]} || continue
+        read -u ${fds[i]} x && {
+            lines[i]="$x"
+        } || {
+            lines[i]=""
+        }
+        forward[i]=false
+    done
+
+    eofs=0
+    min=36000
+    for ((i=0; i<${#lines[@]}; i++)) ; do
+        t=${lines[i]%%,*}
+        [ -z "$t" ] && {
+            ((eofs++))
+            continue
+        }
+        [ $t -lt $min ] && min=$t
+    done
+    [ $eofs = ${#lines[@]} ] && break
+
+    outs=
+    for ((i=0; i<${#lines[@]}; i++)) ; do
+        t=${lines[i]%%,*}
+        [ -z "$t" ] && continue
+        [ $t -eq $min ] && outs="$outs $i"
+    done
+
+    totals=()
+    for i in $outs ; do
+        vals=(${lines[i]//,/ })
+        num=${#vals[@]}
+        ((num--))
+
+        # first and last special handling
+        totals[0]=${vals[0]}
+        [ ${vals[num]} != 0 -o -z "${totals[num]}" ] && totals[num]=${vals[num]}
+
+        for ((n=1; n<num; n++)) ; do
+            ((totals[n] += vals[n]))
+        done
+        forward[i]=true
+    done
+    all=${totals[@]}
+    echo "${all// /,}"
+done

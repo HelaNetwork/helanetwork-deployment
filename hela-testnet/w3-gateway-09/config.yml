@@ -1,0 +1,38 @@
+runtime_id: 000000000000000000000000000000000000000000000000324f850f9a308d98
+node_address: unix:../client-10/internal.sock
+log:
+  level: info
+  format: json
+  file: ./node.log
+database:
+  host: 127.0.0.1
+  port: 5432
+  db: w3_gateway_09
+  user: postgres
+  password: postgres
+  dial_timeout: 5
+  read_timeout: 10
+  write_timeout: 5
+  max_open_conns: 0
+cache:
+  block_size: 10
+  tx_size: 10485760
+  tx_receipt_size: 10485760
+  metrics: true
+gateway:
+  chain_id: 666888
+  http:
+    host: 0.0.0.0
+    port: 3000
+    cors:
+      - '*'
+  ws:
+    host: 0.0.0.0
+    port: 3001
+    cors:
+      - '*'
+  monitoring:
+    host: 0.0.0.0
+    port: 3002
+  method_limits:
+    get_logs_max_rounds: 100

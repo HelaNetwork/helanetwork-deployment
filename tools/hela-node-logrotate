@@ -1,0 +1,7 @@
+/home/ubuntu/hela-deploy/*/node.log {
+    copytruncate
+    rotate 10
+    compress
+    missingok
+    size 1000M
+}   
